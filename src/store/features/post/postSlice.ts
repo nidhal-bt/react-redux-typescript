@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TPost } from "../../../types/type";
+import { RootState } from "../../store";
 
 // Define a TS type for the data we'll be using
 

@@ -9,6 +9,7 @@ import { Form } from "../ui/form";
 
 export const AddPostForm = () => {
   // Get the `dispatch` method from the store
+  const dispatch = useAppDispatch();
   const form = useForm<TPost>({
     defaultValues: {
       body: "",
@@ -16,7 +17,6 @@ export const AddPostForm = () => {
       id: nanoid(),
     },
   });
-  const dispatch = useAppDispatch();
 
   const onSave = (newPost: TPost) => {
     dispatch(addPost(newPost));
