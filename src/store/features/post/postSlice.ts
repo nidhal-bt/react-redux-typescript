@@ -34,7 +34,7 @@ const initialState: IPostState = {
 };
 
 // Create the slice and pass in the initial state
-const authSlice = createSlice({
+const postsSlice = createSlice({
   name: "post",
   initialState,
   reducers: {
@@ -45,10 +45,23 @@ const authSlice = createSlice({
       };
     },
   },
+  selectors: {
+    // Note that these selectors are given just the `PostsState`
+    // as an argument, not the entire `RootState`
+    selectAllPosts: (postsState) => postsState.posts,
+    selectPostById: (postsState, postId: string) => {
+      return postsState.posts.find((el) => el.id === postId);
+    },
+  },
 });
 
 // Export the auto-generated action creator with the same name
-export const { add: addPost } = authSlice.actions;
+export const { add: addPost } = postsSlice.actions;
+
+// Export the auto-generated selector creator with the same name
+// We can use this methods only in case we don't need an access to the entire RootState
+// else we need to write selectors as standalone functions outside of createSlice
+export const { selectAllPosts, selectPostById } = postsSlice.selectors;
 
 // Export the generated reducer function
-export default authSlice.reducer;
+export default postsSlice.reducer;

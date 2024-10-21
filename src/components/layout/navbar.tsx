@@ -1,8 +1,16 @@
 import { PropsWithChildren } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
+import { useAppDispatch } from "../../store/hooks";
+import { userLoggedOut } from "../../store/features/auth";
 
 const Navbar = ({ children }: PropsWithChildren) => {
+  const dispatch = useAppDispatch();
+
+  const logout = () => {
+    dispatch(userLoggedOut());
+  };
+
   return (
     <div>
       <nav className="flex gap-2">
@@ -12,7 +20,7 @@ const Navbar = ({ children }: PropsWithChildren) => {
         <Button variant={"link"}>
           <Link to={"/add"}>Add</Link>
         </Button>
-        {/* <Link to={"/"}></Link> */}
+        <Button onClick={logout}>Logout</Button>
       </nav>
       {children}
     </div>
