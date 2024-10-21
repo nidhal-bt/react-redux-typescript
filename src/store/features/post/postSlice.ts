@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TPost } from "../../../types/type";
 import { RootState } from "../../store";
+import { userLoggedOut } from "../auth";
 
 // Define a TS type for the data we'll be using
 
@@ -52,6 +53,15 @@ const postsSlice = createSlice({
     selectPostById: (postsState, postId: string) => {
       return postsState.posts.find((el) => el.id === postId);
     },
+  },
+  // a listen event inside the slice for actions that were difined inside the App
+  // every extraReducers event can modifiy only slice state
+  extraReducers(builder) {
+    // Pass the action creator to `builder.addCase()`
+    builder.addCase(userLoggedOut, (state) => {
+      // Clear out the list of posts whenever the user logs out
+      return initialState;
+    });
   },
 });
 
