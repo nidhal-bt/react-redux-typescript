@@ -1,37 +1,49 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TPost } from "../../../types/type";
-import { RootState } from "../../store";
+import { IPost } from "../../../types/type";
 import { userLoggedOut } from "../auth";
+import { axiosClientInstance } from "../../../services/request";
+import { createAppAsyncThunk } from "../../withTypes";
 
 // Define a TS type for the data we'll be using
-
 interface IPostState {
-  posts: Array<TPost>;
+  posts: Array<IPost>;
+  status: "idle" | "pending" | "succeeded" | "rejected";
+  error: string | null;
 }
+
+export const fetchPosts = createAppAsyncThunk(
+  "posts/fetchPosts",
+  async () => {
+    const response = await axiosClientInstance.get<Array<IPost>>("/posts");
+    return response.data;
+  },
+  {
+    // A method to control whether the asyncThunk should be executed.
+    condition(arg, thunkApi) {
+      const postsStatus = selectPostsStatus(thunkApi.getState());
+      if (postsStatus !== "idle") {
+        return false;
+      }
+    },
+  }
+);
+
+export const addNewPost = createAppAsyncThunk(
+  "posts/addNewPost",
+  async (initialPost: Omit<IPost, "id">) => {
+    const response = await axiosClientInstance.post<IPost>(
+      "/posts",
+      initialPost
+    );
+    return response.data;
+  }
+);
 
 // Create an initial state value for the reducer, with that type
 const initialState: IPostState = {
-  posts: [
-    {
-      userId: 1,
-      id: "1",
-      title:
-        "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-      body: "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto",
-    },
-    {
-      userId: 1,
-      id: "2",
-      title: "qui est esse",
-      body: "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla",
-    },
-    {
-      userId: 1,
-      id: "3",
-      title: "ea molestias quasi exercitationem repellat qui ipsa sit aut",
-      body: "et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut ad\nvoluptatem doloribus vel accusantium quis pariatur\nmolestiae porro eius odio et labore et velit aut",
-    },
-  ],
+  posts: [],
+  status: "idle",
+  error: null,
 };
 
 // Create the slice and pass in the initial state
@@ -39,12 +51,12 @@ const postsSlice = createSlice({
   name: "post",
   initialState,
   reducers: {
-    add: (state, action: PayloadAction<TPost>) => {
-      return {
-        ...state,
-        posts: [...state.posts, action.payload],
-      };
-    },
+    // add: (state, action: PayloadAction<IPost>) => {
+    //   return {
+    //     ...state,
+    //     posts: [...state.posts, action.payload],
+    //   };
+    // },
   },
   selectors: {
     // Note that these selectors are given just the `PostsState`
@@ -53,25 +65,48 @@ const postsSlice = createSlice({
     selectPostById: (postsState, postId: string) => {
       return postsState.posts.find((el) => el.id === postId);
     },
+    selectPostsStatus: (postsState) => postsState.status,
+    selectPostsError: (postsState) => postsState.error,
   },
   // a listen event inside the slice for actions that were difined inside the App
   // every extraReducers event can modifiy only slice state
-  extraReducers(builder) {
-    // Pass the action creator to `builder.addCase()`
-    builder.addCase(userLoggedOut, (state) => {
-      // Clear out the list of posts whenever the user logs out
-      return initialState;
-    });
+  extraReducers: (builder) => {
+    builder
+      .addCase(userLoggedOut, () => {
+        // Clear out the list of posts whenever the user logs out
+        return initialState;
+      })
+      .addCase(fetchPosts.pending, (state) => {
+        state.status = "pending";
+      })
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        // Add any fetched posts to the array
+        state.posts.push(...action.payload);
+      })
+      .addCase(fetchPosts.rejected, (state, action) => {
+        state.status = "rejected";
+        state.error = action.error.message ?? "Unknown Error";
+      })
+      .addCase(addNewPost.fulfilled, (state, action) => {
+        // We can directly add the new post object to our posts array
+        state.posts.push(action.payload);
+      });
   },
 });
 
 // Export the auto-generated action creator with the same name
-export const { add: addPost } = postsSlice.actions;
+// export const { add: addPost } = postsSlice.actions;
 
 // Export the auto-generated selector creator with the same name
 // We can use this methods only in case we don't need an access to the entire RootState
 // else we need to write selectors as standalone functions outside of createSlice
-export const { selectAllPosts, selectPostById } = postsSlice.selectors;
+export const {
+  selectAllPosts,
+  selectPostById,
+  selectPostsStatus,
+  selectPostsError,
+} = postsSlice.selectors;
 
 // Export the generated reducer function
 export default postsSlice.reducer;

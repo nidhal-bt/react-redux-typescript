@@ -1,7 +1,7 @@
 import { nanoid } from "@reduxjs/toolkit";
 import { useAppDispatch } from "../../store/hooks";
-import { addPost } from "../../store/features/post/postSlice";
-import { TPost } from "../../types/type";
+import { addNewPost } from "../../store/features/post/postSlice";
+import { IPost } from "../../types/type";
 import { useForm } from "react-hook-form";
 import InputForm from "../form/input-form/input-form";
 import { Button } from "../ui/button";
@@ -10,16 +10,17 @@ import { Form } from "../ui/form";
 export const AddPostForm = () => {
   // Get the `dispatch` method from the store
   const dispatch = useAppDispatch();
-  const form = useForm<TPost>({
+  const form = useForm<IPost>({
     defaultValues: {
+      title: "",
       body: "",
       userId: 0,
       id: nanoid(),
     },
   });
 
-  const onSave = (newPost: TPost) => {
-    dispatch(addPost(newPost));
+  const onSave = (newPost: IPost) => {
+    dispatch(addNewPost(newPost)).unwrap();
   };
 
   return (

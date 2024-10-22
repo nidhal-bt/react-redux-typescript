@@ -1,7 +1,7 @@
 import PostCard from "./post-card";
-import { TPost } from "../../types/type";
+import { IPost } from "../../types/type";
 
-const PostList = ({ posts }: { posts: Array<TPost> }) => {
+const PostList = ({ posts }: { posts: Array<IPost> }) => {
   return (
     <div>
       <h6>post-list</h6>

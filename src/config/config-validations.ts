@@ -3,9 +3,8 @@ import z from "zod";
 const envSchema = z.object({
   apiBaseUrl: z.string().url(),
 });
-
 const envClientSchema = envSchema.safeParse({
-  NEXT_PUBLIC_SUPABASE_URL: process.env.REACT_APP_API_URL,
+  apiBaseUrl: import.meta.env.VITE_SERVER_BASE_URL,
 });
 
 if (!envClientSchema.success) {

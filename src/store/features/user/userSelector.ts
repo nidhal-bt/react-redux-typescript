@@ -13,3 +13,6 @@ export const selectCurrentUser = (state: RootState) => {
   const currentUsername = selectCurrentUsername(state);
   return selectUserByUsername(state, currentUsername);
 };
+
+export const selectUsersStatus = (state: RootState) => state.user.status;
+export const selectUsersError = (state: RootState) => state.user.error;

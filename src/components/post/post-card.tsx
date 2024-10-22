@@ -6,11 +6,11 @@ import {
   CardContent,
   CardFooter,
 } from "../ui/card";
-import { TPost } from "../../types/type";
+import { IPost } from "../../types/type";
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 
-const PostCard = ({ body, title, userId, id }: TPost) => {
+const PostCard = ({ body, title, userId, id }: IPost) => {
   console.log("render card");
   return (
     <Card className="max-w-[250px] h-full">

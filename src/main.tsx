@@ -4,6 +4,9 @@ import App from "./App.tsx";
 import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
+import { fetchUsers } from "./store/features/user/userSlice.ts";
+
+store.dispatch(fetchUsers());
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
