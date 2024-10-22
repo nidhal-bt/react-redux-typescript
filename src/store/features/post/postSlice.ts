@@ -30,7 +30,7 @@ export const fetchPosts = createAppAsyncThunk(
 
 export const addNewPost = createAppAsyncThunk(
   "posts/addNewPost",
-  async (initialPost: Omit<IPost, "id">) => {
+  async (initialPost: Omit<IPost, "id">, {}) => {
     const response = await axiosClientInstance.post<IPost>(
       "/posts",
       initialPost

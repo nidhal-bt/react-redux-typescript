@@ -8,7 +8,7 @@ import {
 } from "../store/features/post";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import Loader from "../components/shared/loader/loader";
-import { fetchUsers, selectCurrentUser } from "../store/features/user";
+import { selectCurrentUser } from "../store/features/user";
 
 const HomePage = () => {
   const dispatch = useAppDispatch();
