@@ -20,9 +20,12 @@ const PostCard = ({ body, title, userId, id }: IPost) => {
       <CardContent>
         <p>{body}</p>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="">
         <Button variant={"link"}>
           <Link to={`/post/${id}`}>See Info</Link>
+        </Button>
+        <Button>
+          <Link to={`/edit/${id}`}>Update Info</Link>
         </Button>
       </CardFooter>
     </Card>

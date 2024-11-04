@@ -13,7 +13,7 @@ export const AddPostForm = () => {
     defaultValues: {
       title: "",
       body: "",
-      userId: 0,
+      userId: "0",
       id: nanoid(),
     },
   });

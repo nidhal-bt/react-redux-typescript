@@ -5,6 +5,7 @@ import AddPostPage from "../pages/add-post-page";
 import PostPage from "../pages/post-page";
 import LoginPage from "../pages/login-page";
 import AuthRoutes from "./auth-routes";
+import { EditPostPage } from "../pages/edit-post-page";
 
 const AppRouter = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const AppRouter = createBrowserRouter([
       {
         path: "/post/:postId",
         element: <PostPage />,
+      },
+      {
+        path: "/edit/:postId",
+        element: <EditPostPage />,
       },
     ],
   },

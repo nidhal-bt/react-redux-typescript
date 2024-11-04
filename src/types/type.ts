@@ -1,6 +1,11 @@
-export type IPost = {
-  userId: number;
+export interface IPost {
+  userId: string;
   id: string;
   title: string;
   body: string;
-};
+}
+
+export interface IUser {
+  id: string;
+  name: string;
+}

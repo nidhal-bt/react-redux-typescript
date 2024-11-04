@@ -2,14 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAppAsyncThunk } from "../../withTypes";
 import { axiosClientInstance } from "../../../services/request";
 import { selectUsersStatus } from "./userSelector";
-import { fetchPosts } from "../post";
 
-interface IUser {
-  id: string;
-  name: string;
-}
+import { IUser } from "../../../types/type";
 
-interface IUserState {
+export interface IUserState {
   users: Array<IUser>;
   status: "idle" | "pending" | "succeeded" | "rejected";
   error: string | null;

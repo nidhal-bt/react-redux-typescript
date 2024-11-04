@@ -20,14 +20,20 @@ export const apiSlice = createApi({
       query: () => ({
         url: `/posts`,
       }),
-      providesTags: ["Post"],
+      providesTags: (result = [], error, arg) => [
+        "Post",
+        ...result.map(({ id }) => ({ type: "Post", id: "LIST" } as const)),
+      ],
     }),
     getPost: builder.query<IPost, { postId: string }>({
       query: ({ postId }: { postId: string }) => `/posts/${postId}`,
+      providesTags: (result, error, { postId }) => [
+        { type: "Post", id: postId },
+      ],
     }),
     addPost: builder.mutation<IPost, IPost>({
       query: (initialPost) => ({
-        // The HTTP URL will be '/fakeApi/posts'
+        // The HTTP URL
         url: "/posts",
         // This is an HTTP POST request, sending an update
         method: "POST",
@@ -36,9 +42,23 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["Post"],
     }),
+    editPost: builder.mutation<IPost, IPost>({
+      query: (post) => ({
+        url: `/posts/${post.id}`,
+        // This is an HTTP POST request, sending an update
+        method: "PATCH",
+        // Include the entire post object as the body of the request
+        body: post,
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: "Post", id: arg.id }],
+    }),
   }),
 });
 
 // Export the auto-generated hook for the `getPosts` query endpoint
-export const { useGetPostsQuery, useAddPostMutation, useGetPostQuery } =
-  apiSlice;
+export const {
+  useGetPostsQuery,
+  useAddPostMutation,
+  useGetPostQuery,
+  useEditPostMutation,
+} = apiSlice;

@@ -2,7 +2,8 @@ import PostList from "../components/post/post-list";
 
 import Loader from "../components/shared/loader/loader";
 
-import { useGetPostsQuery } from "../store/features/api/apiSlice";
+import { apiSlice, useGetPostsQuery } from "../store/features/api/apiSlice";
+import { useAppSelector } from "../store/hooks";
 
 const HomePage = () => {
   const {
@@ -13,7 +14,10 @@ const HomePage = () => {
     currentData,
     refetch,
   } = useGetPostsQuery();
-  console.log("currentData", currentData);
+
+  const test = apiSlice.endpoints.getPosts.select();
+  const res = useAppSelector(test);
+  console.log("test", res);
 
   let content: React.ReactNode;
 
