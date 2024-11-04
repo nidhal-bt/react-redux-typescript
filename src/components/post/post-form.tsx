@@ -1,15 +1,14 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { useAppDispatch } from "../../store/hooks";
-import { addNewPost } from "../../store/features/post/postSlice";
+
 import { IPost } from "../../types/type";
 import { useForm } from "react-hook-form";
 import InputForm from "../form/input-form/input-form";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
+import { useAddPostMutation } from "../../store/features/api/apiSlice";
 
 export const AddPostForm = () => {
-  // Get the `dispatch` method from the store
-  const dispatch = useAppDispatch();
+  const [addNewPost, { isLoading }] = useAddPostMutation();
   const form = useForm<IPost>({
     defaultValues: {
       title: "",
@@ -20,7 +19,7 @@ export const AddPostForm = () => {
   });
 
   const onSave = (newPost: IPost) => {
-    dispatch(addNewPost(newPost)).unwrap();
+    addNewPost(newPost);
   };
 
   return (

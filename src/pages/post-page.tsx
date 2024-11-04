@@ -7,15 +7,24 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { useParams } from "react-router";
-import { useAppSelector } from "../store/hooks";
-import { selectPostById } from "../store/features/post";
-import { selectAllUsers } from "../store/features/user/userSlice";
+import { useGetPostQuery } from "../store/features/api/apiSlice";
+import Loader from "../components/shared/loader/loader";
 
 const PostPage = () => {
   const { postId = "" } = useParams();
-  const post = useAppSelector((state) => selectPostById(state, postId));
-  // const users = useAppSelector(selectAllUsers);
-  // console.log("users", users);
+  const {
+    isFetching,
+    data: post,
+    isError,
+    error,
+  } = useGetPostQuery({ postId });
+
+  if (isFetching) {
+    return <Loader />;
+  }
+  if (isError) {
+    return <div>{error.toString()}</div>;
+  }
 
   return (
     <Card className="max-w-[250px] h-full">

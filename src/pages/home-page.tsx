@@ -1,42 +1,34 @@
-import { useEffect, useRef } from "react";
 import PostList from "../components/post/post-list";
-import {
-  fetchPosts,
-  selectAllPosts,
-  selectPostsError,
-  selectPostsStatus,
-} from "../store/features/post";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+
 import Loader from "../components/shared/loader/loader";
-import { selectCurrentUser } from "../store/features/user";
+
+import { useGetPostsQuery } from "../store/features/api/apiSlice";
 
 const HomePage = () => {
-  const dispatch = useAppDispatch();
-  const posts = useAppSelector(selectAllPosts);
-  const postStatus = useAppSelector(selectPostsStatus);
-  const postError = useAppSelector(selectPostsError);
-  const user = useAppSelector(selectCurrentUser);
-  console.log("user", user);
-
-  useEffect(() => {
-    if (postStatus === "idle") {
-      dispatch(fetchPosts());
-    }
-  }, []);
+  const {
+    data: posts,
+    isLoading,
+    isError,
+    error,
+    currentData,
+    refetch,
+  } = useGetPostsQuery();
+  console.log("currentData", currentData);
 
   let content: React.ReactNode;
 
-  if (postStatus === "pending") {
+  if (isLoading) {
     content = <Loader />;
-  } else if (postStatus === "succeeded") {
+  } else if (isError) {
+    content = <div>{error.toString()}</div>;
+  } else if (posts) {
     content = <PostList posts={posts} />;
-  } else if (postStatus === "rejected") {
-    content = <div>{postError}</div>;
   }
 
   return (
     <div className="p-2">
       <h6>Home page</h6>
+      <button onClick={refetch}>Refetch Posts</button>
       {content}
     </div>
   );

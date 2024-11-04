@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IPost } from "../../../types/type";
 import { userLoggedOut } from "../auth";
-import { axiosClientInstance } from "../../../services/request";
-import { createAppAsyncThunk } from "../../withTypes";
 
 // Define a TS type for the data we'll be using
 interface IPostState {
@@ -10,34 +8,6 @@ interface IPostState {
   status: "idle" | "pending" | "succeeded" | "rejected";
   error: string | null;
 }
-
-export const fetchPosts = createAppAsyncThunk(
-  "posts/fetchPosts",
-  async () => {
-    const response = await axiosClientInstance.get<Array<IPost>>("/posts");
-    return response.data;
-  },
-  {
-    // A method to control whether the asyncThunk should be executed.
-    condition(arg, thunkApi) {
-      const postsStatus = selectPostsStatus(thunkApi.getState());
-      if (postsStatus !== "idle") {
-        return false;
-      }
-    },
-  }
-);
-
-export const addNewPost = createAppAsyncThunk(
-  "posts/addNewPost",
-  async (initialPost: Omit<IPost, "id">, {}) => {
-    const response = await axiosClientInstance.post<IPost>(
-      "/posts",
-      initialPost
-    );
-    return response.data;
-  }
-);
 
 // Create an initial state value for the reducer, with that type
 const initialState: IPostState = {
@@ -71,27 +41,10 @@ const postsSlice = createSlice({
   // a listen event inside the slice for actions that were difined inside the App
   // every extraReducers event can modifiy only slice state
   extraReducers: (builder) => {
-    builder
-      .addCase(userLoggedOut, () => {
-        // Clear out the list of posts whenever the user logs out
-        return initialState;
-      })
-      .addCase(fetchPosts.pending, (state) => {
-        state.status = "pending";
-      })
-      .addCase(fetchPosts.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        // Add any fetched posts to the array
-        state.posts.push(...action.payload);
-      })
-      .addCase(fetchPosts.rejected, (state, action) => {
-        state.status = "rejected";
-        state.error = action.error.message ?? "Unknown Error";
-      })
-      .addCase(addNewPost.fulfilled, (state, action) => {
-        // We can directly add the new post object to our posts array
-        state.posts.push(action.payload);
-      });
+    builder.addCase(userLoggedOut, () => {
+      // Clear out the list of posts whenever the user logs out
+      return initialState;
+    });
   },
 });
 

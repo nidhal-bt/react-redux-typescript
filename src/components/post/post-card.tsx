@@ -11,7 +11,6 @@ import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 
 const PostCard = ({ body, title, userId, id }: IPost) => {
-  console.log("render card");
   return (
     <Card className="max-w-[250px] h-full">
       <CardHeader>

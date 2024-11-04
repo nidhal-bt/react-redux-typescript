@@ -2,6 +2,7 @@ import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import postReducer from "./features/post/postSlice";
 import userReducer from "./features/user/userSlice";
 import authReducer from "./features/auth/authSlice";
+import { apiSlice } from "./features/api/apiSlice";
 
 export const store = configureStore({
   // Pass in the root reducer setup as the `reducer` argument
@@ -9,7 +10,10 @@ export const store = configureStore({
     post: postReducer,
     user: userReducer,
     auth: authReducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(apiSlice.middleware),
 });
 
 // Infer the type of `store`
